@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <MainContainer>
     <h1 v-for="message in messages" :key="message.id">{{ message }}</h1>
     <div @click="randomSort" class="submitButton">Random</div>
     <form class="inputsContainer">
@@ -10,18 +10,27 @@
         :type="inputData.type"
       />
       <div v-on:click="submitButton" class="submitButton">Submit</div>
-      <div>{{ipAddress}}</div>
+      <div>{{ ipAddress }}</div>
+      <div>{{ `${isAuth}` }}</div>
+      <IncrementButton @click="setAuth">Set Auth Status</IncrementButton>
     </form>
-  </div>
+  </MainContainer>
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+
 import { formsInputs } from "../constants";
+import { MainContainer, IncrementButton } from "./styles";
 
 export default {
   name: "HelloWorld",
   props: {
     msg: String,
+  },
+  components: {
+    MainContainer,
+    IncrementButton,
   },
   data: () => ({
     messages: [
@@ -41,16 +50,23 @@ export default {
     formsInputs,
   }),
   methods: {
-    randomSort: function () {
+    ...mapMutations(["setAuthStatus"]),
+    randomSort() {
       this.messages = this.messages.sort(() => 0.5 - Math.random());
     },
-    submitButton: function () {
+    submitButton() {
       const formData = { ...this.formData };
       console.log(formData, "dat");
     },
+    setAuth() {
+      this.setAuthStatus(!this.isAuth);
+    },
   },
   computed: {
-    ipAddress: function () {
+    ...mapState({
+      isAuth: (state) => state.auth.isAuth,
+    }),
+    ipAddress() {
       return "10.10.10.10";
     },
   },
@@ -59,6 +75,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* .mainContainer {
+  border: 1px solid red;
+} */
 .submitButton {
   border: 1px solid red;
   max-width: 200px;
