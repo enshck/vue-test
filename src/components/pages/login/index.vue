@@ -1,12 +1,21 @@
 <template>
   <MainContainer>
-    <LoginForm loginData="loginData" signUpHandler="signUpHandler" />
+    <LoginForm
+      :loginData="loginData"
+      :authHandler="authHandler"
+      :isValidForm="isValidForm"
+      :authWithGoogle="authWithGoogleHandler"
+      type="AUTH"
+    />
   </MainContainer>
 </template>
 
 <script>
-import LoginForm from "./form";
+import LoginForm from "../../common/loginForm";
 import { MainContainer } from "./styles";
+import { validateEmail } from "../../../utils";
+import firebase from "../../../utils/firebase";
+import { authWithGoogle } from "../../../utils";
 
 export default {
   name: "Login",
@@ -19,14 +28,35 @@ export default {
       loginData: {
         email: "",
         password: "",
-        phone: "",
         error: "",
       },
     };
   },
+  computed: {
+    isValidForm() {
+      const { password, email } = this.loginData;
+      const isValidEmail = validateEmail(email);
+
+      return isValidEmail && password.length > 12 && password.length < 24;
+    },
+  },
   methods: {
-    signUpHandler() {
-      console.log("sign");
+    async authHandler() {
+      const { email, password } = this.loginData;
+      const result = await firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password);
+
+      if (result.user) {
+        this.$router.push("ItemsPage");
+      }
+    },
+    async authWithGoogleHandler() {
+      const result = await authWithGoogle();
+
+      if (result.user) {
+        this.$router.push("ItemsPage");
+      }
     },
   },
 };

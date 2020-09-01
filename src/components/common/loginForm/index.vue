@@ -2,39 +2,27 @@
   <FormMainContainer>
     <TabContainer>
       <StyledNavLink>
-        <router-link to="/login">
-          Войти
-        </router-link>
+        <router-link to="/login">Войти</router-link>
       </StyledNavLink>
       <StyledNavLink>
-        <router-link to="/signUp">
-          Создать аккаунт
-        </router-link>
+        <router-link to="/signUp">Создать аккаунт</router-link>
       </StyledNavLink>
     </TabContainer>
     <ControlsContainer>
       <InputContainer>
         <label>Email:</label>
-        <SignUpInput
-          type="text"
-          placeholder="example@example.com"
-          v-model="loginData.email"
-        />
+        <SignUpInput type="text" placeholder="example@example.com" v-model="loginData.email" />
       </InputContainer>
       <InputContainer>
         <label>Пароль:</label>
-        <SignUpInput
-          type="password"
-          placeholder="**********"
-          v-model="loginData.password"
-        />
+        <SignUpInput type="password" placeholder="**********" v-model="loginData.password" />
       </InputContainer>
-      <SubmitButton @click="signUpHandler">
-        Войти
-      </SubmitButton>
+      <SubmitButton
+        @click="authHandler"
+        :isBlocked="!isValidForm"
+      >{{ type === "AUTH" ? "Войти" : "Регистрация" }}</SubmitButton>
       <Social>
-        <img src="../../../assets/google.png" alt="google" />
-        <img src="../../../assets/facebook.png" alt="facebook" />
+        <img src="../../../assets/google.png" alt="google" @click="authWithGoogle" />
       </Social>
     </ControlsContainer>
     <ErrorMessage v-if="loginData.error">{{ loginData.error }}</ErrorMessage>
@@ -69,7 +57,10 @@ export default {
   },
   props: {
     loginData: Object,
-    signUpHandler: Function,
+    authHandler: Function,
+    type: String,
+    isValidForm: Boolean,
+    authWithGoogle: Function,
   },
 };
 </script>

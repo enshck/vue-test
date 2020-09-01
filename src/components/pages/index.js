@@ -4,7 +4,7 @@ import VueRouter from "vue-router";
 import LoginPage from "./login";
 import SignUp from "./signUp";
 import ItemsPage from "./itemsPage";
-import { getAuthStatus } from "../../api";
+import { onAuthStateChanged } from "../../utils";
 
 Vue.use(VueRouter);
 
@@ -47,8 +47,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const token = localStorage.getItem("token");
-  const isAuth = await getAuthStatus(token);
+  const isAuth = await onAuthStateChanged();
 
   if (
     to.matched.some((record) => record.meta.routeType === "ONLY_AUTH_USERS")
@@ -73,6 +72,7 @@ router.beforeEach(async (to, from, next) => {
       next();
     }
   } else {
+    // all others routes
     next();
   }
 });
