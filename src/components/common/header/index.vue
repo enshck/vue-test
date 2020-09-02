@@ -1,6 +1,6 @@
 <template>
-  <MainContainer v-if="$route.path === '/ItemsPage'">
-    Example app
+  <MainContainer v-if="$route.path === '/messages'">
+    Chat app
     <StyledButton @click="signOutHandler">Выйти</StyledButton>
   </MainContainer>
 </template>

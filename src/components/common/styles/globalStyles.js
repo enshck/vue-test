@@ -11,6 +11,10 @@ const GlobalStyle = injectGlobal`
   padding: 0;
   font-family: 'Roboto', sans-serif;
   }
+  input, 
+  textarea {
+    font-family: 'Roboto', sans-serif;
+  }
 `;
 
 export default GlobalStyle;

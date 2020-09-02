@@ -48,14 +48,14 @@ export default {
         .signInWithEmailAndPassword(email, password);
 
       if (result.user) {
-        this.$router.push("ItemsPage");
+        this.$router.push("/messages");
       }
     },
     async authWithGoogleHandler() {
       const result = await authWithGoogle();
 
       if (result.user) {
-        this.$router.push("ItemsPage");
+        this.$router.push("/messages");
       }
     },
   },

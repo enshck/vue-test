@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 
 import LoginPage from "./login";
 import SignUp from "./signUp";
-import ItemsPage from "./itemsPage";
+import MessagesPage from "./messagesPage";
 import { onAuthStateChanged } from "../../utils";
 
 Vue.use(VueRouter);
@@ -31,9 +31,9 @@ const routes = [
     },
   },
   {
-    path: "/itemsPage",
-    name: "ItemsPage",
-    component: ItemsPage,
+    path: "/messages",
+    name: "MessagesPage",
+    component: MessagesPage,
     meta: {
       routeType: "ONLY_AUTH_USERS",
     },
@@ -66,7 +66,7 @@ router.beforeEach(async (to, from, next) => {
     // only not auth routes
     if (isAuth) {
       next({
-        name: "ItemsPage",
+        name: "MessagesPage",
       });
     } else {
       next();
