@@ -25,9 +25,20 @@ export const ChatElement = styled("div", ChatElementType)`
   }
 `;
 
+export const AddChatTitle = styled.div`
+  font-size: 16px;
+  text-align: center;
+  user-select: none;
+`;
+
 export const ChatTitle = styled.div`
   font-size: 18px;
   font-weight: 500;
   color: #000;
   text-transform: capitalize;
+  user-select: none;
+`;
+
+export const ChatPopoverMainContainer = styled.div`
+  padding: 10px;
 `;

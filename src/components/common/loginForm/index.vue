@@ -13,6 +13,10 @@
         <label>Email:</label>
         <SignUpInput type="text" placeholder="example@example.com" v-model="loginData.email" />
       </InputContainer>
+      <InputContainer v-if="type !== 'AUTH'">
+        <label>Имя:</label>
+        <SignUpInput type="text" placeholder="enshck" v-model="loginData.name" />
+      </InputContainer>
       <InputContainer>
         <label>Пароль:</label>
         <SignUpInput type="password" placeholder="**********" v-model="loginData.password" />

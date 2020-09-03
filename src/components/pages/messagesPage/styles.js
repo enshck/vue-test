@@ -7,4 +7,5 @@ export const MainContainer = styled.div`
   height: 100%;
   border: 1px solid #e0dcdc;
   box-sizing: border-box;
+  flex: 1;
 `;

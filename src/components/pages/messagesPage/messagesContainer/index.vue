@@ -1,37 +1,34 @@
 <template>
   <MainContainer>
-    <ChangedChatContainer v-if="changedChat">
-      <MessageContainer>
+    <template v-if="changedChat">
+      <MessageContainer ref="messageContainer">
         <MessageElement v-for="(value, key) in messagesData" :key="key">
-          <InfoContainer
-            >{{
-              value.createdBy.name
-                ? value.createdBy.name.split(" ")[0]
-                : "Аноним"
+          <InfoContainer>
+            {{
+            value.createdBy.name
+            ? value.createdBy.name.split(" ")[0]
+            : "Аноним"
             }}
-            <span>({{ formatDistanceToNow(+key) }} ago)</span></InfoContainer
-          >
+            <span>({{ formatDistanceToNow(+key) }} ago)</span>
+          </InfoContainer>
           {{ value.text }}
         </MessageElement>
       </MessageContainer>
       <SendMessageInputContainer>
         <textarea
           v-model="newMessageForm.messageText"
-          placeholder="Введите сообщение и нажмите Shift + Enter"
-          @keydown.enter.shift.prevent="sendNewMessageHandler"
+          :placeholder="`Enter -- Отправить сообщение\nShift + Enter -- Новая строка`"
+          @keydown.enter.exact="sendMessage"
         ></textarea>
       </SendMessageInputContainer>
-    </ChangedChatContainer>
-    <NotChangedChatContainer v-if="!changedChat"
-      >Чат не выбран</NotChangedChatContainer
-    >
+    </template>
+    <NotChangedChatContainer v-if="!changedChat">Чат не выбран</NotChangedChatContainer>
   </MainContainer>
 </template>
 
 <script>
 import {
   MainContainer,
-  ChangedChatContainer,
   NotChangedChatContainer,
   MessageElement,
   SendMessageInputContainer,
@@ -49,7 +46,6 @@ export default {
   },
   components: {
     MainContainer,
-    ChangedChatContainer,
     NotChangedChatContainer,
     MessageElement,
     SendMessageInputContainer,
@@ -69,6 +65,13 @@ export default {
     },
     messagesData() {
       return this.changedChat ? this.changedChat.messages : null;
+    },
+  },
+  methods: {
+    sendMessage() {
+      this.sendNewMessageHandler();
+      const messageContainerRef = this.$refs.messageContainer;
+      messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
     },
   },
 };

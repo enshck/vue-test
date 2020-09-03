@@ -21,6 +21,7 @@ export const FormMainContainer = styled.div`
   box-sizing: border-box;
   padding-left: 20px;
   padding-right: 20px;
+  position: relative;
 `;
 
 const typeSubmitButton = {
@@ -70,6 +71,8 @@ export const ErrorMessage = styled.h3`
   color: red;
   font-size: 14px;
   text-align: center;
+  position: absolute;
+  bottom: 10px;
 `;
 
 export const TabContainer = styled.div`

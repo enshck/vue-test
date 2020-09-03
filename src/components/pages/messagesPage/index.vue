@@ -4,6 +4,10 @@
       :chatsData="chatsData"
       :changedChatId="changedChatId"
       :changeChatHandler="changeChatHandler"
+      :createChatHandler="createChatHandler"
+      :isOpenCreateChatPopover="isOpenCreateChatPopover"
+      :openCreateChatPopover="openCreateChatPopover"
+      :closeCreateChatPopover="closeCreateChatPopover"
     />
     <MessagesContainer
       :changedChatId="changedChatId"
@@ -35,6 +39,7 @@ export default {
       newMessageForm: {
         messageText: "",
       },
+      isOpenCreateChatPopover: false,
     };
   },
   async created() {
@@ -71,6 +76,13 @@ export default {
       } catch (err) {
         console.log(err, "error");
       }
+    },
+    async createChatHandler() {},
+    openCreateChatPopover() {
+      this.isOpenCreateChatPopover = true;
+    },
+    closeCreateChatPopover() {
+      this.isOpenCreateChatPopover = false;
     },
   },
 };

@@ -3,15 +3,13 @@ import styled from "vue-styled-components";
 export const MainContainer = styled.div`
   height: 100%;
   max-height: 100%;
-  padding: 10px;
   box-sizing: border-box;
   width: 100%;
+  display: grid;
+  grid-template-rows: minmax(85%, 400px) minmax(15%, 200px);
 `;
 
-export const ChangedChatContainer = styled.div`
-  height: 100%;
-  width: 100%;
-`;
+export const ChangedChatContainer = styled.div``;
 
 export const MessageElement = styled.div`
   width: 100%;
@@ -19,6 +17,9 @@ export const MessageElement = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 20px;
+  max-width: calc(100% - 20px);
+  word-break: break-word;
+  white-space: pre-wrap;
   :first-child {
     margin-top: 0;
   }
@@ -26,6 +27,7 @@ export const MessageElement = styled.div`
 
 export const MessageContainer = styled.div`
   overflow: auto;
+  padding: 10px;
 `;
 
 export const InfoContainer = styled.div`
@@ -49,7 +51,6 @@ export const NotChangedChatContainer = styled.div`
 
 export const SendMessageInputContainer = styled.div`
   width: 100%;
-  height: 100px;
 
   textarea {
     resize: none;

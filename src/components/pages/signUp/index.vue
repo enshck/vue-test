@@ -14,8 +14,8 @@
 import LoginForm from "../../common/loginForm";
 import { MainContainer } from "./styles";
 import firebase from "../../../utils/firebase";
-import { validateEmail } from "../../../utils";
-import { authWithGoogle } from "../../../utils";
+import { validateEmail, authWithGoogle } from "../../../utils";
+import { signUpErrors } from "../../../utils/errors";
 
 export default {
   name: "SignUp",
@@ -28,27 +28,45 @@ export default {
       loginData: {
         email: "",
         password: "",
+        name: "",
         error: "",
       },
     };
   },
   computed: {
     isValidForm() {
-      const { password, email } = this.loginData;
+      const { password, email, name } = this.loginData;
       const isValidEmail = validateEmail(email);
 
-      return isValidEmail && password.length > 12 && password.length < 24;
+      return (
+        isValidEmail &&
+        password.length > 12 &&
+        password.length < 24 &&
+        name.length > 1 &&
+        name.length < 20
+      );
     },
   },
   methods: {
     async signUpHandler() {
       const { email, password } = this.loginData;
-      const result = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password);
 
-      if (result.user) {
-        this.$router.push("/messages");
+      try {
+        if (this.isValidForm) {
+          const result = await firebase
+            .auth()
+            .createUserWithEmailAndPassword(email, password);
+
+          if (result.user) {
+            await result.user.updateProfile({
+              displayName: name,
+            });
+            this.loginData.error = "";
+            this.$router.push("/messages");
+          }
+        }
+      } catch (err) {
+        this.loginData.error = signUpErrors[err.code] || "Неизвестная ошибка";
       }
     },
     async authWithGoogleHandler() {
