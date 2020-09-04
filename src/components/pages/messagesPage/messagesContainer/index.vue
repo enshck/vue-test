@@ -67,10 +67,14 @@ export default {
       return this.changedChat ? this.changedChat.messages : null;
     },
   },
+  created() {
+    const messageContainerRef = this.$refs.messageContainer.$el;
+    messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
+  },
   methods: {
-    sendMessage() {
-      this.sendNewMessageHandler();
-      const messageContainerRef = this.$refs.messageContainer;
+    async sendMessage() {
+      await this.sendNewMessageHandler();
+      const messageContainerRef = this.$refs.messageContainer.$el;
       messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
     },
   },

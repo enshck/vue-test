@@ -13,8 +13,8 @@
         <AddChatTitle>Добавить чат</AddChatTitle>
       </ChatElement>
       <ChatPopover
-        :createChatHandler="createChatHandler"
         :isOpenCreateChatPopover="isOpenCreateChatPopover"
+        :closeCreateChatPopover="closeCreateChatPopover"
       />
     </ChatPopoverMainContainer>
   </MainContainer>
@@ -44,7 +44,6 @@ export default {
     chatsData: Object,
     changedChatId: String || null,
     changeChatHandler: Function,
-    createChatHandler: Function,
     openCreateChatPopover: Function,
     closeCreateChatPopover: Function,
     isOpenCreateChatPopover: Boolean,

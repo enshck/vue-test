@@ -41,4 +41,5 @@ export const ChatTitle = styled.div`
 
 export const ChatPopoverMainContainer = styled.div`
   padding: 10px;
+  position: relative;
 `;

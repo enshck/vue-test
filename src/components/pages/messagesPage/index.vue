@@ -4,7 +4,6 @@
       :chatsData="chatsData"
       :changedChatId="changedChatId"
       :changeChatHandler="changeChatHandler"
-      :createChatHandler="createChatHandler"
       :isOpenCreateChatPopover="isOpenCreateChatPopover"
       :openCreateChatPopover="openCreateChatPopover"
       :closeCreateChatPopover="closeCreateChatPopover"
@@ -61,23 +60,24 @@ export default {
       const { messageText } = this.newMessageForm;
       const createdDate = new Date().getTime();
 
-      try {
-        await firebase
-          .database()
-          .ref(`chats/${this.changedChatId}/messages/${createdDate}`)
-          .set({
-            createdBy: {
-              name: displayName || email,
-              id: uid,
-            },
-            text: messageText,
-          });
-        this.newMessageForm.messageText = "";
-      } catch (err) {
-        console.log(err, "error");
+      if (messageText.trim().length > 0) {
+        try {
+          await firebase
+            .database()
+            .ref(`chats/${this.changedChatId}/messages/${createdDate}`)
+            .set({
+              createdBy: {
+                name: displayName || email,
+                id: uid,
+              },
+              text: messageText,
+            });
+          this.newMessageForm.messageText = "";
+        } catch (err) {
+          console.log(err, "error");
+        }
       }
     },
-    async createChatHandler() {},
     openCreateChatPopover() {
       this.isOpenCreateChatPopover = true;
     },
