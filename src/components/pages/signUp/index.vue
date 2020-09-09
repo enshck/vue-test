@@ -40,8 +40,8 @@ export default {
 
       return (
         isValidEmail &&
-        password.length > 12 &&
-        password.length < 24 &&
+        password.length > 6 &&
+        password.length < 120 &&
         name.length > 1 &&
         name.length < 20
       );

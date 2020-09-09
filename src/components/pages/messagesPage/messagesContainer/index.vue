@@ -1,8 +1,33 @@
 <template>
   <MainContainer>
-    <template v-if="changedChat">
-      <MessageContainer ref="messageContainer">
-        <MessageElement v-for="(value, key) in messagesData" :key="key">
+    <MessageContainer ref="messageContainer" v-show="changedChat">
+      <EditControlContainer v-if="isChangedMessages">
+        <Controls>
+          <StyledButton>Редактировать</StyledButton>
+          <StyledButton>Удалить</StyledButton>
+        </Controls>
+        <CancelButton @click="clearMessageHandler">Отмена</CancelButton>
+      </EditControlContainer>
+      <MessageElement
+        v-for="(value, key) in messagesData"
+        :key="key"
+        @dblclick="() => changeMessageHandler(key)"
+        @click.stop.prevent="() => isChangedMessages && changeMessageHandler(key)"
+        :isEditMode="isChangedMessages"
+      >
+        <transition name="fade">
+          <StyledCheckboxContainer v-if="isChangedMessages">
+            <input
+              type="checkbox"
+              name="messageCheckbox"
+              :id="key"
+              :value="key"
+              v-model="changedMessages"
+            />
+            <span />
+          </StyledCheckboxContainer>
+        </transition>
+        <MessageSubElement>
           <InfoContainer>
             {{
             value.createdBy.name
@@ -12,21 +37,31 @@
             <span>({{ formatDistanceToNow(+key) }} ago)</span>
           </InfoContainer>
           {{ value.text }}
-        </MessageElement>
-      </MessageContainer>
-      <SendMessageInputContainer>
-        <textarea
-          v-model="newMessageForm.messageText"
-          :placeholder="`Enter -- Отправить сообщение\nShift + Enter -- Новая строка`"
-          @keydown.enter.exact="sendMessage"
-        ></textarea>
-      </SendMessageInputContainer>
-    </template>
+        </MessageSubElement>
+      </MessageElement>
+    </MessageContainer>
+    <SendMessageInputContainer v-if="changedChat">
+      <textarea
+        v-model="newMessageForm.messageText"
+        :placeholder="`Enter -- Отправить сообщение\nShift + Enter -- Новая строка`"
+        @keydown.enter.exact="sendMessage"
+      />
+      <SmilesContainer>
+        <div @click="openSmilesPopover">😃</div>
+        <SmilesPopover
+          :isOpenSmilesPopover="isOpenSmilesContainer"
+          :closeSmilesPopover="closeSmilesPopover"
+          :addSmileToMessage="addSmileToMessage"
+        />
+      </SmilesContainer>
+    </SendMessageInputContainer>
     <NotChangedChatContainer v-if="!changedChat">Чат не выбран</NotChangedChatContainer>
   </MainContainer>
 </template>
 
 <script>
+import { formatDistanceToNow } from "date-fns";
+
 import {
   MainContainer,
   NotChangedChatContainer,
@@ -34,8 +69,15 @@ import {
   SendMessageInputContainer,
   InfoContainer,
   MessageContainer,
+  SmilesContainer,
+  MessageSubElement,
+  StyledCheckboxContainer,
+  StyledButton,
+  EditControlContainer,
+  CancelButton,
+  Controls,
 } from "./styles";
-import { formatDistanceToNow } from "date-fns";
+import SmilesPopover from "./smilesPopover";
 
 export default {
   name: "MessagesContainer",
@@ -51,12 +93,29 @@ export default {
     SendMessageInputContainer,
     InfoContainer,
     MessageContainer,
+    SmilesContainer,
+    SmilesPopover,
+    MessageSubElement,
+    StyledCheckboxContainer,
+    StyledButton,
+    EditControlContainer,
+    CancelButton,
+    Controls,
   },
   props: {
     changedChatId: String,
     chatsData: Object,
     newMessageForm: Object,
     sendNewMessageHandler: Function,
+    isOpenSmilesContainer: Boolean,
+    openSmilesPopover: Function,
+    closeSmilesPopover: Function,
+    addSmileToMessage: Function,
+    changeMessageMode: Function,
+    isMessageChangeMode: Boolean,
+    changeMessageHandler: Function,
+    changedMessages: Array,
+    clearMessageHandler: Function,
   },
   computed: {
     changedChat() {
@@ -66,10 +125,18 @@ export default {
     messagesData() {
       return this.changedChat ? this.changedChat.messages : null;
     },
+    isChangedMessages() {
+      return Boolean(this.changedMessages.length > 0);
+    },
   },
-  created() {
-    const messageContainerRef = this.$refs.messageContainer.$el;
-    messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
+  mounted() {
+    this.$watch(
+      () => this.changedChatId,
+      () => {
+        const messageContainerRef = this.$refs.messageContainer.$el;
+        messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
+      }
+    );
   },
   methods: {
     async sendMessage() {

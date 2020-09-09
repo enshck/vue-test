@@ -1,8 +1,12 @@
 <template>
-  <ChatPopoverContainer v-if="isOpenCreateChatPopover" ref="chatContainer">
+  <Popover
+    :isOpenPopover="isOpenCreateChatPopover"
+    :closePopover="closeCreateChatPopover"
+    :MainWrapper="ChatPopoverContainer"
+  >
     <input type="text" v-model="chatName" />
     <Button @click="createChatHandler" :isBlocked="!isValidNewChatForm">Добавить</Button>
-  </ChatPopoverContainer>
+  </Popover>
 </template>
 
 <script>
@@ -11,34 +15,25 @@ import { format } from "date-fns";
 import { Button, ChatPopoverContainer } from "./styles";
 import { onAuthStateChanged } from "../../../../../utils";
 import firebase from "../../../../../utils/firebase";
+import Popover from "../../../../common/popover";
 
 export default {
-  name: "chatPopover",
+  name: "ChatPopover",
   data() {
     return {
       chatName: "",
+      ChatPopoverContainer,
     };
   },
   components: {
     Button,
-    ChatPopoverContainer,
+    Popover,
   },
   props: {
     isOpenCreateChatPopover: Boolean,
     closeCreateChatPopover: Function,
   },
   methods: {
-    focusInput() {
-      this.$refs.chatContainer.$el.focus();
-    },
-    closePopoverHandler(event) {
-      if (this.isOpenCreateChatPopover) {
-        const refElement = this.$refs.chatContainer.$el;
-        if (!refElement.contains(event.target)) {
-          this.closeCreateChatPopover();
-        }
-      }
-    },
     async createChatHandler() {
       const authData = await onAuthStateChanged();
       const { uid } = authData;
@@ -61,12 +56,6 @@ export default {
         }
       }
     },
-  },
-  created() {
-    document.addEventListener("mousedown", this.closePopoverHandler);
-  },
-  beforeDestroy() {
-    document.removeEventListener("mousedown", this.closePopoverHandler);
   },
   computed: {
     isValidNewChatForm() {

@@ -13,6 +13,15 @@
       :chatsData="chatsData"
       :newMessageForm="newMessageForm"
       :sendNewMessageHandler="sendNewMessageHandler"
+      :isOpenSmilesContainer="isOpenSmilesContainer"
+      :openSmilesPopover="openSmilesPopover"
+      :closeSmilesPopover="closeSmilesPopover"
+      :addSmileToMessage="addSmileToMessage"
+      :changeMessageMode="changeMessageMode"
+      :isMessageChangeMode="isMessageChangeMode"
+      :changeMessageHandler="changeMessageHandler"
+      :changedMessages="changedMessages"
+      :clearMessageHandler="clearMessageHandler"
     />
   </MainContainer>
 </template>
@@ -39,6 +48,9 @@ export default {
         messageText: "",
       },
       isOpenCreateChatPopover: false,
+      isOpenSmilesContainer: false,
+      isMessageChangeMode: false,
+      changedMessages: [],
     };
   },
   async created() {
@@ -50,6 +62,9 @@ export default {
       }
     });
   },
+  updated() {
+    console.log(this.changedMessages, "mess");
+  },
   methods: {
     changeChatHandler(chatId) {
       this.changedChatId = chatId;
@@ -59,8 +74,9 @@ export default {
       const { displayName, email, uid } = authData;
       const { messageText } = this.newMessageForm;
       const createdDate = new Date().getTime();
+      const trimMessage = messageText.trim();
 
-      if (messageText.trim().length > 0) {
+      if (trimMessage.length > 0) {
         try {
           await firebase
             .database()
@@ -70,7 +86,7 @@ export default {
                 name: displayName || email,
                 id: uid,
               },
-              text: messageText,
+              text: trimMessage,
             });
           this.newMessageForm.messageText = "";
         } catch (err) {
@@ -83,6 +99,32 @@ export default {
     },
     closeCreateChatPopover() {
       this.isOpenCreateChatPopover = false;
+    },
+    openSmilesPopover() {
+      this.isOpenSmilesContainer = true;
+    },
+    closeSmilesPopover() {
+      this.isOpenSmilesContainer = false;
+    },
+    addSmileToMessage(smile) {
+      const { messageText } = this.newMessageForm;
+      this.newMessageForm.messageText = `${messageText}${smile}`;
+    },
+    changeMessageMode(status) {
+      this.isMessageChangeMode = status;
+    },
+    changeMessageHandler(id) {
+      const { changedMessages } = this;
+      const indexOfExistingElement = changedMessages.indexOf(id);
+
+      if (indexOfExistingElement === -1) {
+        this.changedMessages = [...this.changedMessages, id];
+      } else {
+        this.changedMessages.splice(indexOfExistingElement, 1);
+      }
+    },
+    clearMessageHandler() {
+      this.changedMessages = [];
     },
   },
 };
