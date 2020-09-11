@@ -19,7 +19,7 @@ export const MessageElement = styled("div", messageElementProps)`
   width: 100%;
   font-size: 16px;
   display: flex;
-  margin: 20px 10px 0 10px;
+  margin-top: 20px;
   box-sizing: border-box;
   max-width: calc(100% - 20px);
   word-break: break-word;
@@ -46,6 +46,9 @@ export const MessageElement = styled("div", messageElementProps)`
     isEditMode &&
     css`
       user-select: none;
+      :first-child {
+        margin-top: 50px;
+      }
     `}
 `;
 
@@ -119,13 +122,19 @@ export const MessageSubElement = styled.div`
 
 export const MessageContainer = styled.div`
   overflow: auto;
+  padding: 10px;
+  height: 100%;
+  box-sizing: border-box;
+`;
+
+export const MessageMainContainer = styled.div`
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const EditControlContainer = styled.div`
-  position: sticky;
-  left: 0;
-  top: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -135,6 +144,10 @@ export const EditControlContainer = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 5px 5px 0px rgba(230, 230, 230, 0.3);
   z-index: 99999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50px;
 `;
 
 export const StyledButton = styled.div`

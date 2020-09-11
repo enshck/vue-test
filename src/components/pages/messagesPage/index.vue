@@ -22,6 +22,8 @@
       :changeMessageHandler="changeMessageHandler"
       :changedMessages="changedMessages"
       :clearMessageHandler="clearMessageHandler"
+      :deleteMessages="deleteMessages"
+      :setEditableValue="setEditableValue"
     />
   </MainContainer>
 </template>
@@ -57,40 +59,60 @@ export default {
     const data = await firebase.database();
     return data.ref("/chats").on("value", (res) => {
       if (res) {
-        console.log(res.val());
         this.chatsData = res.val();
       }
     });
   },
-  updated() {
-    console.log(this.changedMessages, "mess");
-  },
+  // async beforeDestroy() {
+  //   const data = await firebase.database();
+
+  //   data.ref("/chats").off();
+  // },
   methods: {
     changeChatHandler(chatId) {
       this.changedChatId = chatId;
     },
     async sendNewMessageHandler() {
-      const authData = await onAuthStateChanged();
-      const { displayName, email, uid } = authData;
       const { messageText } = this.newMessageForm;
-      const createdDate = new Date().getTime();
       const trimMessage = messageText.trim();
 
-      if (trimMessage.length > 0) {
+      const isEditMode = this.changedMessages.length > 0;
+
+      if (isEditMode) {
+        const [editableMessage] = this.changedMessages;
+
         try {
           await firebase
             .database()
-            .ref(`chats/${this.changedChatId}/messages/${createdDate}`)
-            .set({
-              createdBy: {
-                name: displayName || email,
-                id: uid,
-              },
+            .ref(`chats/${this.changedChatId}/messages/${editableMessage}`)
+            .update({
               text: trimMessage,
             });
           this.newMessageForm.messageText = "";
+          this.changedMessages = [];
         } catch (err) {
           console.log(err, "error");
+        }
+      } else {
+        const authData = await onAuthStateChanged();
+        const { displayName, email, uid } = authData;
+        const createdDate = new Date().getTime();
+        if (trimMessage.length > 0) {
+          try {
+            await firebase
+              .database()
+              .ref(`chats/${this.changedChatId}/messages/${createdDate}`)
+              .set({
+                createdBy: {
+                  name: displayName || email,
+                  id: uid,
+                },
+                text: trimMessage,
+              });
+            this.newMessageForm.messageText = "";
+          } catch (err) {
+            console.log(err, "error");
+          }
         }
       }
     },
@@ -125,6 +147,34 @@ export default {
     },
     clearMessageHandler() {
       this.changedMessages = [];
+      this.newMessageForm.messageText = "";
+    },
+    async deleteMessages() {
+      try {
+        const promisesArray = [...this.changedMessages].map((elem) =>
+          firebase
+            .database()
+            .ref(`chats/${this.changedChatId}/messages/${elem}`)
+            .remove()
+        );
+        await Promise.all(promisesArray);
+        this.changedMessages = [];
+      } catch (err) {
+        console.log(err, "error");
+      }
+    },
+    setEditableValue() {
+      const [editableMessage] = this.changedMessages;
+      const changedChat = this.chatsData[this.changedChatId];
+
+      if (!changedChat) {
+        return;
+      }
+      const { text } = changedChat.messages[editableMessage];
+
+      if (text) {
+        this.newMessageForm.messageText = text;
+      }
     },
   },
 };

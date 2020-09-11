@@ -1,45 +1,50 @@
 <template>
   <MainContainer>
-    <MessageContainer ref="messageContainer" v-show="changedChat">
+    <MessageMainContainer v-show="changedChat">
       <EditControlContainer v-if="isChangedMessages">
         <Controls>
-          <StyledButton>Редактировать</StyledButton>
-          <StyledButton>Удалить</StyledButton>
+          <StyledButton
+            @click="setEditableValue"
+            v-if="Boolean(changedMessages.length < 2)"
+          >Редактировать</StyledButton>
+          <StyledButton @click="deleteMessages">Удалить</StyledButton>
         </Controls>
         <CancelButton @click="clearMessageHandler">Отмена</CancelButton>
       </EditControlContainer>
-      <MessageElement
-        v-for="(value, key) in messagesData"
-        :key="key"
-        @dblclick="() => changeMessageHandler(key)"
-        @click.stop.prevent="() => isChangedMessages && changeMessageHandler(key)"
-        :isEditMode="isChangedMessages"
-      >
-        <transition name="fade">
-          <StyledCheckboxContainer v-if="isChangedMessages">
-            <input
-              type="checkbox"
-              name="messageCheckbox"
-              :id="key"
-              :value="key"
-              v-model="changedMessages"
-            />
-            <span />
-          </StyledCheckboxContainer>
-        </transition>
-        <MessageSubElement>
-          <InfoContainer>
-            {{
-            value.createdBy.name
-            ? value.createdBy.name.split(" ")[0]
-            : "Аноним"
-            }}
-            <span>({{ formatDistanceToNow(+key) }} ago)</span>
-          </InfoContainer>
-          {{ value.text }}
-        </MessageSubElement>
-      </MessageElement>
-    </MessageContainer>
+      <MessageContainer ref="messageContainer">
+        <MessageElement
+          v-for="(value, key) in messagesData"
+          :key="key"
+          @dblclick="() => changeMessageHandler(key)"
+          @click.stop.prevent="() => isChangedMessages && changeMessageHandler(key)"
+          :isEditMode="isChangedMessages"
+        >
+          <transition name="fade">
+            <StyledCheckboxContainer v-if="isChangedMessages">
+              <input
+                type="checkbox"
+                name="messageCheckbox"
+                :id="key"
+                :value="key"
+                v-model="changedMessages"
+              />
+              <span />
+            </StyledCheckboxContainer>
+          </transition>
+          <MessageSubElement>
+            <InfoContainer>
+              {{
+              value.createdBy.name
+              ? value.createdBy.name.split(" ")[0]
+              : "Аноним"
+              }}
+              <span>({{ formatDistanceToNow(+key) }} ago)</span>
+            </InfoContainer>
+            {{ value.text }}
+          </MessageSubElement>
+        </MessageElement>
+      </MessageContainer>
+    </MessageMainContainer>
     <SendMessageInputContainer v-if="changedChat">
       <textarea
         v-model="newMessageForm.messageText"
@@ -76,6 +81,7 @@ import {
   EditControlContainer,
   CancelButton,
   Controls,
+  MessageMainContainer,
 } from "./styles";
 import SmilesPopover from "./smilesPopover";
 
@@ -101,6 +107,7 @@ export default {
     EditControlContainer,
     CancelButton,
     Controls,
+    MessageMainContainer,
   },
   props: {
     changedChatId: String,
@@ -116,6 +123,8 @@ export default {
     changeMessageHandler: Function,
     changedMessages: Array,
     clearMessageHandler: Function,
+    deleteMessages: Function,
+    setEditableValue: Function,
   },
   computed: {
     changedChat() {
