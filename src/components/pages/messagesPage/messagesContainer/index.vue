@@ -11,6 +11,9 @@
         </Controls>
         <CancelButton @click="clearMessageHandler">Отмена</CancelButton>
       </EditControlContainer>
+      <MobileHeader>
+        <img src="../../../../assets/back.png" alt="back" @click="() => changeChatHandler(null)" />
+      </MobileHeader>
       <MessageContainer ref="messageContainer">
         <MessageElement
           v-for="(value, key) in messagesData"
@@ -32,13 +35,13 @@
             </StyledCheckboxContainer>
           </transition>
           <MessageSubElement>
-            <InfoContainer>
+            <InfoContainer v-if="getAuthorOfPrevMessage(key)">
               {{
               value.createdBy.name
               ? value.createdBy.name.split(" ")[0]
               : "Аноним"
               }}
-              <span>({{ formatDistanceToNow(+key) }} ago)</span>
+              <span>({{ format(+key, 'HH:mm, d MMM') }})</span>
             </InfoContainer>
             {{ value.text }}
           </MessageSubElement>
@@ -65,7 +68,8 @@
 </template>
 
 <script>
-import { formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
+import firebase from "../../../../utils/firebase";
 
 import {
   MainContainer,
@@ -82,6 +86,7 @@ import {
   CancelButton,
   Controls,
   MessageMainContainer,
+  MobileHeader,
 } from "./styles";
 import SmilesPopover from "./smilesPopover";
 
@@ -89,7 +94,7 @@ export default {
   name: "MessagesContainer",
   data() {
     return {
-      formatDistanceToNow,
+      format,
     };
   },
   components: {
@@ -108,6 +113,7 @@ export default {
     CancelButton,
     Controls,
     MessageMainContainer,
+    MobileHeader,
   },
   props: {
     changedChatId: String,
@@ -125,6 +131,7 @@ export default {
     clearMessageHandler: Function,
     deleteMessages: Function,
     setEditableValue: Function,
+    changeChatHandler: Function,
   },
   computed: {
     changedChat() {
@@ -136,6 +143,9 @@ export default {
     },
     isChangedMessages() {
       return Boolean(this.changedMessages.length > 0);
+    },
+    userId() {
+      return firebase.auth().currentUser.uid;
     },
   },
   mounted() {
@@ -152,6 +162,27 @@ export default {
       await this.sendNewMessageHandler();
       const messageContainerRef = this.$refs.messageContainer.$el;
       messageContainerRef.scrollTop = messageContainerRef.scrollHeight;
+    },
+    getAuthorOfPrevMessage(currentMessageId) {
+      const entries = Object.entries(this.messagesData);
+      let prevMessageIndex = null;
+      const currentMessageData = this.messagesData[currentMessageId];
+
+      entries.forEach((elem, key) => {
+        const [index] = elem;
+
+        if (index === currentMessageId) {
+          prevMessageIndex = key - 1;
+        }
+      });
+
+      if (prevMessageIndex < 0) {
+        return true;
+      }
+      // eslint-disable-next-line no-unused-vars
+      const [prevMessageId, prevMessageData] = entries[prevMessageIndex];
+
+      return prevMessageData.createdBy.id !== currentMessageData.createdBy.id;
     },
   },
 };

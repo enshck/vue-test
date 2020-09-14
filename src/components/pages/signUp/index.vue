@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     async signUpHandler() {
-      const { email, password } = this.loginData;
+      const { email, password, name } = this.loginData;
 
       try {
         if (this.isValidForm) {

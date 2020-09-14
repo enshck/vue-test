@@ -23,7 +23,7 @@ export const MessageElement = styled("div", messageElementProps)`
   box-sizing: border-box;
   max-width: calc(100% - 20px);
   word-break: break-word;
-  white-space: pre-wrap;
+  // white-space: pre-wrap;
   position: relative;
   :first-child {
     margin-top: 0;
@@ -50,6 +50,12 @@ export const MessageElement = styled("div", messageElementProps)`
         margin-top: 50px;
       }
     `}
+
+  @media (max-width: 900px) {
+    :first-child {
+      margin-top: 50px;
+    }
+  }
 `;
 
 export const StyledCheckboxContainer = styled.label`
@@ -148,6 +154,17 @@ export const EditControlContainer = styled.div`
   top: 0;
   left: 0;
   height: 50px;
+`;
+
+export const MobileHeader = styled(EditControlContainer)`
+  z-index: 999;
+
+  img {
+    width: 15px;
+  }
+  @media (min-width: 901px) {
+    display: none;
+  }
 `;
 
 export const StyledButton = styled.div`

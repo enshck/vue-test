@@ -1,10 +1,24 @@
 import styled from "vue-styled-components";
 
-export const MainContainer = styled.div`
+const mainContainerType = {
+  changedChatId: Boolean,
+};
+
+export const MainContainer = styled("div", mainContainerType)`
   box-sizing: border-box;
   border-right: 1px solid #e0dcdc;
   height: 100%;
   padding: 10px;
+
+  @media (max-width: 900px) {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    background: #fff;
+    border-right: none;
+    overflow: auto;
+    display: ${(props) => (props.changedChatId ? "none" : "block")};
+  }
 `;
 
 const ChatElementType = {
@@ -22,6 +36,11 @@ export const ChatElement = styled("div", ChatElementType)`
 
   :first-child {
     margin-top: 0;
+  }
+
+  @media (max-width: 900px) {
+    max-width: 300px;
+    margin: 20px auto 0 auto;
   }
 `;
 

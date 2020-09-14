@@ -1,5 +1,5 @@
 <template>
-  <MainContainer>
+  <MainContainer :changedChatId="Boolean(changedChatId)">
     <ChatElement
       v-for="(chatData, key) in chatsData"
       :key="key"

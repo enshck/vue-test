@@ -1,39 +1,41 @@
 <template>
-  <MainContainer>
-    <ChatsList
-      :chatsData="chatsData"
-      :changedChatId="changedChatId"
-      :changeChatHandler="changeChatHandler"
-      :isOpenCreateChatPopover="isOpenCreateChatPopover"
-      :openCreateChatPopover="openCreateChatPopover"
-      :closeCreateChatPopover="closeCreateChatPopover"
-    />
-    <MessagesContainer
-      :changedChatId="changedChatId"
-      :chatsData="chatsData"
-      :newMessageForm="newMessageForm"
-      :sendNewMessageHandler="sendNewMessageHandler"
-      :isOpenSmilesContainer="isOpenSmilesContainer"
-      :openSmilesPopover="openSmilesPopover"
-      :closeSmilesPopover="closeSmilesPopover"
-      :addSmileToMessage="addSmileToMessage"
-      :changeMessageMode="changeMessageMode"
-      :isMessageChangeMode="isMessageChangeMode"
-      :changeMessageHandler="changeMessageHandler"
-      :changedMessages="changedMessages"
-      :clearMessageHandler="clearMessageHandler"
-      :deleteMessages="deleteMessages"
-      :setEditableValue="setEditableValue"
-    />
-  </MainContainer>
+  <MainContentContainer>
+    <MainContainer>
+      <ChatsList
+        :chatsData="chatsData"
+        :changedChatId="changedChatId"
+        :changeChatHandler="changeChatHandler"
+        :isOpenCreateChatPopover="isOpenCreateChatPopover"
+        :openCreateChatPopover="openCreateChatPopover"
+        :closeCreateChatPopover="closeCreateChatPopover"
+      />
+      <MessagesContainer
+        :changedChatId="changedChatId"
+        :chatsData="chatsData"
+        :newMessageForm="newMessageForm"
+        :sendNewMessageHandler="sendNewMessageHandler"
+        :isOpenSmilesContainer="isOpenSmilesContainer"
+        :openSmilesPopover="openSmilesPopover"
+        :closeSmilesPopover="closeSmilesPopover"
+        :addSmileToMessage="addSmileToMessage"
+        :changeMessageMode="changeMessageMode"
+        :isMessageChangeMode="isMessageChangeMode"
+        :changeMessageHandler="changeMessageHandler"
+        :changedMessages="changedMessages"
+        :clearMessageHandler="clearMessageHandler"
+        :deleteMessages="deleteMessages"
+        :setEditableValue="setEditableValue"
+        :changeChatHandler="changeChatHandler"
+      />
+    </MainContainer>
+  </MainContentContainer>
 </template>
 
 <script>
 import MessagesContainer from "./messagesContainer";
 import ChatsList from "./chatsList";
 import firebase from "../../../utils/firebase";
-import { MainContainer } from "./styles";
-import { onAuthStateChanged } from "../../../utils";
+import { MainContainer, MainContentContainer } from "./styles";
 
 export default {
   name: "MessagesPage",
@@ -41,6 +43,7 @@ export default {
     MessagesContainer,
     ChatsList,
     MainContainer,
+    MainContentContainer,
   },
   data() {
     return {
@@ -57,17 +60,12 @@ export default {
   },
   async created() {
     const data = await firebase.database();
-    return data.ref("/chats").on("value", (res) => {
+    data.ref("/chats").on("value", (res) => {
       if (res) {
         this.chatsData = res.val();
       }
     });
   },
-  // async beforeDestroy() {
-  //   const data = await firebase.database();
-
-  //   data.ref("/chats").off();
-  // },
   methods: {
     changeChatHandler(chatId) {
       this.changedChatId = chatId;
@@ -88,13 +86,12 @@ export default {
             .update({
               text: trimMessage,
             });
-          this.newMessageForm.messageText = "";
-          this.changedMessages = [];
+          this.clearMessageHandler();
         } catch (err) {
           console.log(err, "error");
         }
       } else {
-        const authData = await onAuthStateChanged();
+        const authData = await firebase.auth().currentUser;
         const { displayName, email, uid } = authData;
         const createdDate = new Date().getTime();
         if (trimMessage.length > 0) {
@@ -158,7 +155,7 @@ export default {
             .remove()
         );
         await Promise.all(promisesArray);
-        this.changedMessages = [];
+        this.clearMessageHandler();
       } catch (err) {
         console.log(err, "error");
       }

@@ -3,6 +3,7 @@
     :isOpenPopover="isOpenCreateChatPopover"
     :closePopover="closeCreateChatPopover"
     :MainWrapper="ChatPopoverContainer"
+    @keydown.enter="handl"
   >
     <input type="text" v-model="chatName" />
     <Button @click="createChatHandler" :isBlocked="!isValidNewChatForm">Добавить</Button>
@@ -13,7 +14,6 @@
 import { format } from "date-fns";
 
 import { Button, ChatPopoverContainer } from "./styles";
-import { onAuthStateChanged } from "../../../../../utils";
 import firebase from "../../../../../utils/firebase";
 import Popover from "../../../../common/popover";
 
@@ -33,9 +33,16 @@ export default {
     isOpenCreateChatPopover: Boolean,
     closeCreateChatPopover: Function,
   },
+  created() {
+    document.addEventListener("keydown", this.handl);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.handl);
+  },
   methods: {
     async createChatHandler() {
-      const authData = await onAuthStateChanged();
+      var authData = firebase.auth().currentUser;
+
       const { uid } = authData;
 
       if (this.isValidNewChatForm) {
@@ -54,6 +61,20 @@ export default {
         } catch (err) {
           console.log(err, "error");
         }
+      }
+    },
+    handl({ key }) {
+      if (!this.isOpenCreateChatPopover) {
+        return;
+      }
+
+      if (key === "Enter") {
+        if (!this.isValidNewChatForm) {
+          return;
+        }
+        this.createChatHandler();
+      } else if (key === "Escape") {
+        this.closeCreateChatPopover();
       }
     },
   },

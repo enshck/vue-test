@@ -8,4 +8,17 @@ export const MainContainer = styled.div`
   border: 1px solid #e0dcdc;
   box-sizing: border-box;
   flex: 1;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+`;
+
+export const MainContentContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  @media (max-width: 1650px) {
+    box-sizing: border-box;
+    padding: 0 10px 0 10px;
+  }
 `;

@@ -13,6 +13,9 @@ export const SmilesPopoverContainer = styled.div`
   :focus {
     outline: none;
   }
+  @media (max-width: 1700px) {
+    left: calc(50% - 165px);
+  }
 `;
 
 export const MainContainer = styled.div`

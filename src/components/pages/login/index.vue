@@ -37,7 +37,7 @@ export default {
       const { password, email } = this.loginData;
       const isValidEmail = validateEmail(email);
 
-      return isValidEmail && password.length > 12 && password.length < 24;
+      return isValidEmail && password.length > 6 && password.length < 120;
     },
   },
   methods: {
