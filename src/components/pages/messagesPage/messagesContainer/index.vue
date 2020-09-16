@@ -13,6 +13,7 @@
       </EditControlContainer>
       <MobileHeader>
         <img src="../../../../assets/back.png" alt="back" @click="() => changeChatHandler(null)" />
+        <p>{{changedChat && changedChat.name}}</p>
       </MobileHeader>
       <MessageContainer ref="messageContainer">
         <MessageElement
@@ -20,6 +21,7 @@
           :key="key"
           @dblclick="() => changeMessageHandler(key)"
           @click.stop.prevent="() => isChangedMessages && changeMessageHandler(key)"
+          v-longpress="() => changeMessageHandler(key)"
           :isEditMode="isChangedMessages"
         >
           <transition name="fade">
@@ -49,12 +51,11 @@
       </MessageContainer>
     </MessageMainContainer>
     <SendMessageInputContainer v-if="changedChat">
-      <textarea
-        v-model="newMessageForm.messageText"
-        :placeholder="`Enter -- Отправить сообщение\nShift + Enter -- Новая строка`"
-        @keydown.enter.exact="sendMessage"
-      />
+      <textarea v-model="newMessageForm.messageText" />
       <SmilesContainer>
+        <SendMessageButton @click="sendMessage">
+          <img src="../../../../assets/send.png" alt="send" />
+        </SendMessageButton>
         <div @click="openSmilesPopover">😃</div>
         <SmilesPopover
           :isOpenSmilesPopover="isOpenSmilesContainer"
@@ -67,9 +68,10 @@
   </MainContainer>
 </template>
 
+
 <script>
+import Vue from "vue";
 import { format } from "date-fns";
-import firebase from "../../../../utils/firebase";
 
 import {
   MainContainer,
@@ -87,8 +89,13 @@ import {
   Controls,
   MessageMainContainer,
   MobileHeader,
+  SendMessageButton,
 } from "./styles";
+import firebase from "../../../../utils/firebase";
+import LongPress from "../../../../directives/longpress";
 import SmilesPopover from "./smilesPopover";
+
+Vue.use(LongPress);
 
 export default {
   name: "MessagesContainer",
@@ -114,6 +121,7 @@ export default {
     Controls,
     MessageMainContainer,
     MobileHeader,
+    SendMessageButton,
   },
   props: {
     changedChatId: String,
@@ -183,6 +191,9 @@ export default {
       const [prevMessageId, prevMessageData] = entries[prevMessageIndex];
 
       return prevMessageData.createdBy.id !== currentMessageData.createdBy.id;
+    },
+    cons() {
+      console.log(".<<<M<>>");
     },
   },
 };

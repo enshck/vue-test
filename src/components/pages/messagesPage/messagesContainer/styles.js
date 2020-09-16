@@ -23,7 +23,7 @@ export const MessageElement = styled("div", messageElementProps)`
   box-sizing: border-box;
   max-width: calc(100% - 20px);
   word-break: break-word;
-  // white-space: pre-wrap;
+  white-space: pre-wrap;
   position: relative;
   :first-child {
     margin-top: 0;
@@ -54,6 +54,13 @@ export const MessageElement = styled("div", messageElementProps)`
   @media (max-width: 900px) {
     :first-child {
       margin-top: 50px;
+      ${({ isEditMode }) =>
+        isEditMode &&
+        css`
+          :first-child {
+            margin-top: 80px;
+          }
+        `}
     }
   }
 `;
@@ -154,13 +161,24 @@ export const EditControlContainer = styled.div`
   top: 0;
   left: 0;
   height: 50px;
+  @media (max-width: 900px) {
+    height: 80px;
+    flex-direction: column;
+  }
 `;
 
 export const MobileHeader = styled(EditControlContainer)`
   z-index: 999;
+  height: 50px;
+  flex-direction: row;
 
   img {
     width: 15px;
+  }
+
+  p {
+    margin: 0 auto;
+    font-size: 18px;
   }
   @media (min-width: 901px) {
     display: none;
@@ -168,7 +186,7 @@ export const MobileHeader = styled(EditControlContainer)`
 `;
 
 export const StyledButton = styled.div`
-  width: 150px;
+  width: 100%;
   padding: 5px;
   display: flex;
   justify-content: center;
@@ -192,6 +210,9 @@ export const CancelButton = styled.div`
 
 export const Controls = styled.div`
   display: flex;
+  @media (max-width: 900px) {
+    width: 100%;
+  }
 `;
 
 export const InfoContainer = styled.div`
@@ -227,13 +248,23 @@ export const SendMessageInputContainer = styled.div`
     font-size: 16px;
     padding: 10px;
     box-sizing: border-box;
-    padding-right: 50px;
+    padding-right: 60px;
   }
 `;
 
 export const SmilesContainer = styled.div`
   position: absolute;
-  right: 25px;
+  right: 10px;
   top: 10px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+export const SendMessageButton = styled.div`
+  img {
+    width: 20px;
+    margin-top: 4px;
+  }
+  margin-right: 5px;
 `;

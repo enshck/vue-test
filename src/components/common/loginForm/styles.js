@@ -22,6 +22,11 @@ export const FormMainContainer = styled.div`
   padding-left: 20px;
   padding-right: 20px;
   position: relative;
+  @media (max-width: 450px) {
+    box-shadow: none;
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const typeSubmitButton = {
@@ -115,6 +120,9 @@ export const StyledNavLink = styled.div`
 export const ControlsContainer = styled.div`
   padding: 40px 60px 50px;
   position: relative;
+  @media (max-width: 450px) {
+    padding: 10px 30px;
+  }
 `;
 
 export const InputContainer = styled.div`

@@ -9,8 +9,9 @@ export const MainContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
     position: relative;
+    display: flex;
+    border-bottom: none;
   }
 `;
 

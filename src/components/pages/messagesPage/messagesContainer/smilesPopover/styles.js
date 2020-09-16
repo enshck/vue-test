@@ -16,6 +16,9 @@ export const SmilesPopoverContainer = styled.div`
   @media (max-width: 1700px) {
     left: calc(50% - 165px);
   }
+  @media (max-width: 900px) {
+    max-height: 150px;
+  }
 `;
 
 export const MainContainer = styled.div`

@@ -5,6 +5,6 @@ export const MainContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100%;
   box-sizing: border-box;
 `;

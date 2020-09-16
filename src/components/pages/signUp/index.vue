@@ -47,6 +47,12 @@ export default {
       );
     },
   },
+  mounted() {
+    document.addEventListener("keydown", this.submitEnterHandler);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this.submitEnterHandler);
+  },
   methods: {
     async signUpHandler() {
       const { email, password, name } = this.loginData;
@@ -74,6 +80,11 @@ export default {
 
       if (result.user) {
         this.$router.push("/messages");
+      }
+    },
+    submitEnterHandler(e) {
+      if (e.key === "Enter" && this.isValidForm) {
+        this.signUpHandler();
       }
     },
   },

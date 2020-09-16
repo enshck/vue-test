@@ -11,6 +11,12 @@ export const MainContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @media (max-width: 900px) {
+    padding: 10px 30px;
+  }
+  @media (max-width: 600px) {
+    padding: 10px 15px;
+  }
 `;
 
 export const StyledButton = styled.div`
